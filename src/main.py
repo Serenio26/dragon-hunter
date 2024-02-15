@@ -5,12 +5,14 @@ from src.DamageText import DamageText
 from src.Fighter import Fighter
 from src.HealthBar import HealthBar
 from src.env import RED, GREEN, SCREEN, SCREEN_HEIGHT, BOTTOM_PANEL, DAMAGE_TEXT_GROUP, FONT
+from src.module import draw_text, draw_img, draw_panel
 
 # pygame.init()
 
 # set Frame rate
 clock = pygame.time.Clock()
 fps = 60
+
 
 # game window
 
@@ -31,8 +33,6 @@ game_over = 0
 # load image
 # backgroud images
 background_img = pygame.image.load('../asset/img/Background/background.png').convert_alpha()
-# panel image
-panel_img = pygame.image.load('../asset/img/Icons/panel.png').convert_alpha()
 # buttom image
 potion_img = pygame.image.load('../asset/img/Icons/potion.png').convert_alpha()
 restart_img = pygame.image.load('../asset/img/Icons/restart.png').convert_alpha()
@@ -43,31 +43,7 @@ defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
 sword_img = pygame.image.load('../asset/img/Icons/sword.png').convert_alpha()
 
 
-# function for drawing text
-def draw_text(text, font, text_col, x, y):
-    img = font.render(text, True, text_col)
-    SCREEN.blit(img, (x, y))
-
-
-# function for drawing background
-def draw_bg():
-    SCREEN.blit(background_img, (0, 0))
-
-
-# function for panel
-def draw_panel():
-    # draw panel rectengale
-    SCREEN.blit(panel_img, (0, SCREEN_HEIGHT - BOTTOM_PANEL))
-    # show knight stats
-    draw_text(f'{knight.name} HP: {knight.hp}', FONT, RED, 100, SCREEN_HEIGHT - BOTTOM_PANEL + 10)
-    for count, i in enumerate(bandit_list):
-        # show name and health
-        draw_text(f'{i.name} HP: {i.hp}', FONT, RED, 550, (SCREEN_HEIGHT - BOTTOM_PANEL + 10) + count * 60)
-
-
 # fighter class
-
-
 knight = Fighter(200, 260, 'Knight', 50, 10, 3)
 bandit1 = Fighter(550, 260, 'Bandit', 10, 6, 1)
 bandit2 = Fighter(700, 260, 'Bandit', 10, 6, 1)
@@ -92,10 +68,10 @@ while run:
     clock.tick(fps)
 
     # draw background
-    draw_bg()
+    draw_img(img=background_img, x=0, y=0)
 
     # draw panel
-    draw_panel()
+    draw_panel(fighter=knight, bandits=bandit_list)
     knight_health_bar.draw(knight.hp)
     bandit1_health_bar.draw(bandit1.hp)
     bandit2_health_bar.draw(bandit2.hp)
@@ -124,8 +100,8 @@ while run:
             # hide mouse
             pygame.mouse.set_visible(False)
             # show sowrd in place of mouse cursor
-            SCREEN.blit(sword_img, pos)
-            if clicked == True and bandit.alive == True:
+            draw_img(sword_img, *pos)
+            if clicked and bandit.alive:
                 attack = True
                 target = bandit_list[count]
     if potion_button.draw():
@@ -135,18 +111,18 @@ while run:
 
     if game_over == 0:
         # player action
-        if knight.alive == True:
+        if knight.alive:
             if current_fighter == 1:
                 action_cooldown += 1
                 if action_cooldown >= action_wait_time:
                     # look for player action
                     # attack
-                    if attack == True and target != None:
+                    if attack and target is not None:
                         knight.attack(target)
                         current_fighter += 1
                         action_cooldown = 0
                     # potion
-                    if potion == True:
+                    if potion:
                         if knight.potions > 0:
                             # check if potion will heal player beond mx health
                             if knight.max_hp - knight.hp > potion_effect:
@@ -165,7 +141,7 @@ while run:
         # enemy action
         for count, bandit in enumerate(bandit_list):
             if current_fighter == 2 + count:
-                if bandit.alive == True:
+                if bandit.alive:
                     action_cooldown += 1
                     if action_cooldown >= action_wait_time:
                         # check if bandit need to heal first
@@ -195,7 +171,7 @@ while run:
     # check if all bandit are dead
     alive_bandit = 0
     for bandit in bandit_list:
-        if bandit.alive == True:
+        if bandit.alive:
             alive_bandit += 1
     if alive_bandit == 0:
         game_over = 1
@@ -203,9 +179,9 @@ while run:
     # check if game is over
     if game_over != 0:
         if game_over == 1:
-            SCREEN.blit(victory_img, (250, 50))
+            draw_img(img=victory_img, x=250, y=50)
         if game_over == -1:
-            SCREEN.blit(defeat_img, (250, 50))
+            draw_img(img=defeat_img, x=250, y=50)
         if restart_button.draw():
             knight.reset()
             for bandit in bandit_list:
