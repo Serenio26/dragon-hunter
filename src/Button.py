@@ -8,6 +8,7 @@ class Button():
         self.rect.topleft = (x, y)
         self.clicked = False
         self.surface = surface
+        self.is_start = False
 
     def draw(self):
         action = False
@@ -17,7 +18,7 @@ class Button():
 
         # check mouseover and clicked conditions
         if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked is not False:
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked is False:
                 action = True
                 self.clicked = True
 

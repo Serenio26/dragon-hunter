@@ -48,9 +48,9 @@ defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
 sword_img = pygame.image.load('../asset/img/Icons/sword.png').convert_alpha()
 
 # fighter class
-knight = Fighter(200, 260, 'Knight', 50, 10, 3)
-bandit1 = Fighter(550, 260, 'Bandit', 10, 6, 1)
-bandit2 = Fighter(700, 260, 'Bandit', 10, 6, 1)
+knight = Fighter(200, 260, 'Knight', 50, 1, 3)
+bandit1 = Fighter(550, 260, 'Bandit', 10, 50, 1)
+bandit2 = Fighter(700, 260, 'Bandit', 10, 10, 1)
 
 bandit_list = []
 bandit_list.append(bandit1)
@@ -79,17 +79,22 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            is_start = True
+            # is_start = True
             clicked = True
-            SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
         else:
             clicked = False
         # is_start = True
 
-    # TODO 增加判斷 clicked 是按到 button，才可以讓 is_start=True
     if clicked:
-        pos = pygame.mouse.get_pos()
-        # if bandit.rect.collidepoint(pos):
+        start_button = Button(SCREEN, HOME_SCREEN_WIDTH / 2 - 15, HOME_SCREEN_HEIGHT - 150, start_button_img, 150, 49)
+        if start_button.draw() and start_button.is_start is False:
+            is_start = True
+            start_button.is_start = True
+            SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
+
+    # TODO 增加判斷 clicked 是按到 menu button，讓 is_start=False, xxx=True
+
+    # TODO Extract Function
     if is_start:
         # draw background
         draw_img(img=background_img, x=0, y=0, display=SCREEN)
@@ -215,7 +220,8 @@ while run:
                 action_cooldown = 0
                 game_over = 0
 
-    # TODO 增加裝備按鈕的畫面
+    # TODO if xxx=True then 顯示個人資料+裝備的畫面
+
     pygame.display.update()
 
 pygame.quit()
