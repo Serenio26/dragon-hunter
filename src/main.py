@@ -4,8 +4,9 @@ from src.Button import Button
 from src.DamageText import DamageText
 from src.Fighter import Fighter
 from src.HealthBar import HealthBar
-from src.env import RED, GREEN, SCREEN, SCREEN_HEIGHT, BOTTOM_PANEL, DAMAGE_TEXT_GROUP, FONT
-from src.module import draw_text, draw_img, draw_panel
+from src.env import RED, GREEN, SCREEN_HEIGHT, BOTTOM_PANEL, DAMAGE_TEXT_GROUP, FONT, SCREEN_WIDTH, \
+    HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT
+from src.module import draw_text, draw_img, draw_panel, get_screen_mode
 
 # control variable
 is_start = False
@@ -14,11 +15,9 @@ is_start = False
 clock = pygame.time.Clock()
 fps = 60
 
-
-# game window
-
 # to run window
 pygame.display.set_caption('Battle screen')
+SCREEN = get_screen_mode(width=HOME_SCREEN_WIDTH, height=HOME_SCREEN_HEIGHT)
 
 # define game variables
 current_fighter = 1
@@ -36,15 +35,17 @@ game_over = 0
 main_page_img = pygame.image.load('../asset/img/Background/main_page_img.png').convert_alpha()
 # backgroud images
 background_img = pygame.image.load('../asset/img/Background/background.png').convert_alpha()
-# buttom image
+# button image
 potion_img = pygame.image.load('../asset/img/Icons/potion.png').convert_alpha()
 restart_img = pygame.image.load('../asset/img/Icons/restart.png').convert_alpha()
+start_button_img = pygame.image.load('../asset/img/Icons/start_button.png').convert_alpha()
+workshop_img = pygame.image.load('../asset/img/Icons/workshop.png').convert_alpha()
+# TODO 增加開始按鈕和裝備按鈕
 # load victory and defeat image
 victory_img = pygame.image.load('../asset/img/Icons/victory.png').convert_alpha()
 defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
 # sword image
 sword_img = pygame.image.load('../asset/img/Icons/sword.png').convert_alpha()
-
 
 # fighter class
 knight = Fighter(200, 260, 'Knight', 50, 10, 3)
@@ -65,13 +66,14 @@ bandit2_health_bar = HealthBar(550, SCREEN_HEIGHT - BOTTOM_PANEL + 100, bandit2.
 potion_button = Button(SCREEN, 100, SCREEN_HEIGHT - BOTTOM_PANEL + 70, potion_img, 64, 64)
 restart_button = Button(SCREEN, 330, 120, restart_img, 120, 30)
 
-# main game runnign system
+# main game running system
 run = True
 while run:
     clock.tick(fps)
 
     # draw main page
-    draw_img(img=main_page_img, x=0, y=0)
+    draw_img(img=main_page_img, x=0, y=0, display=SCREEN)
+    draw_img(img=start_button_img, x=HOME_SCREEN_WIDTH / 2 - 15, y=HOME_SCREEN_HEIGHT - 150, display=SCREEN)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -79,25 +81,31 @@ while run:
         if event.type == pygame.MOUSEBUTTONDOWN:
             is_start = True
             clicked = True
+            SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
         else:
             clicked = False
+        # is_start = True
 
+    # TODO 增加判斷 clicked 是按到 button，才可以讓 is_start=True
+    if clicked:
+        pos = pygame.mouse.get_pos()
+        # if bandit.rect.collidepoint(pos):
     if is_start:
         # draw background
-        draw_img(img=background_img, x=0, y=0)
+        draw_img(img=background_img, x=0, y=0, display=SCREEN)
 
         # draw panel
-        draw_panel(fighter=knight, bandits=bandit_list)
-        knight_health_bar.draw(knight.hp)
-        bandit1_health_bar.draw(bandit1.hp)
-        bandit2_health_bar.draw(bandit2.hp)
+        draw_panel(fighter=knight, bandits=bandit_list, display=SCREEN)
+        knight_health_bar.draw(knight.hp, SCREEN)
+        bandit1_health_bar.draw(bandit1.hp, SCREEN)
+        bandit2_health_bar.draw(bandit2.hp, SCREEN)
 
         # draw fighter
         knight.update()
-        knight.draw()
+        knight.draw(display=SCREEN)
         for bandit in bandit_list:
             bandit.update()
-            bandit.draw()
+            bandit.draw(display=SCREEN)
 
         # draw damage text
         DAMAGE_TEXT_GROUP.update()
@@ -116,15 +124,16 @@ while run:
                 # hide mouse
                 pygame.mouse.set_visible(False)
                 # show sword in place of mouse cursor
-                draw_img(sword_img, *pos)
+                draw_img(sword_img, *pos, SCREEN)
                 if clicked and bandit.alive:
                     attack = True
                     target = bandit_list[count]
         if potion_button.draw():
             potion = True
         # show how many left
-        draw_text(str(knight.potions), FONT, RED, 150, SCREEN_HEIGHT - BOTTOM_PANEL + 70)
+        draw_text(str(knight.potions), FONT, RED, 150, SCREEN_HEIGHT - BOTTOM_PANEL + 70, SCREEN)
 
+        # TODO refactor
         if game_over == 0:
             # player action
             if knight.alive:
@@ -195,9 +204,9 @@ while run:
         # check if game is over
         if game_over != 0:
             if game_over == 1:
-                draw_img(img=victory_img, x=250, y=50)
+                draw_img(img=victory_img, x=250, y=50, display=SCREEN)
             if game_over == -1:
-                draw_img(img=defeat_img, x=250, y=50)
+                draw_img(img=defeat_img, x=250, y=50, display=SCREEN)
             if restart_button.draw():
                 knight.reset()
                 for bandit in bandit_list:
@@ -206,6 +215,7 @@ while run:
                 action_cooldown = 0
                 game_over = 0
 
+    # TODO 增加裝備按鈕的畫面
     pygame.display.update()
 
 pygame.quit()
