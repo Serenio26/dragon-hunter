@@ -10,6 +10,7 @@ from src.module import draw_text, draw_img, draw_panel, get_screen_mode
 
 # control variable
 is_start = False
+is_pause = False
 
 # set Frame rate
 clock = pygame.time.Clock()
@@ -24,7 +25,7 @@ current_fighter = 1
 total_fighters = 3
 action_cooldown = 0
 action_wait_time = 90
-attack = False
+is_attack = False
 potion = False
 potion_effect = 10
 clicked = False
@@ -40,7 +41,8 @@ potion_img = pygame.image.load('../asset/img/Icons/potion.png').convert_alpha()
 restart_img = pygame.image.load('../asset/img/Icons/restart.png').convert_alpha()
 start_button_img = pygame.image.load('../asset/img/Icons/start_button.png').convert_alpha()
 workshop_img = pygame.image.load('../asset/img/Icons/workshop.png').convert_alpha()
-# TODO 增加開始按鈕和裝備按鈕
+# TODO 修改裝備按鈕
+menu_btn_img = pygame.image.load('../asset/img/Icons/start_button.png').convert_alpha()
 # load victory and defeat image
 victory_img = pygame.image.load('../asset/img/Icons/victory.png').convert_alpha()
 defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
@@ -74,6 +76,7 @@ while run:
     # draw main page
     draw_img(img=main_page_img, x=0, y=0, display=SCREEN)
     draw_img(img=start_button_img, x=HOME_SCREEN_WIDTH / 2 - 15, y=HOME_SCREEN_HEIGHT - 150, display=SCREEN)
+    draw_img(img=menu_btn_img, x=10, y=10, display=SCREEN)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -85,6 +88,7 @@ while run:
             clicked = False
         # is_start = True
 
+    # handle start btn event
     if clicked:
         start_button = Button(SCREEN, HOME_SCREEN_WIDTH / 2 - 15, HOME_SCREEN_HEIGHT - 150, start_button_img, 150, 49)
         if start_button.draw() and start_button.is_start is False:
@@ -92,7 +96,13 @@ while run:
             start_button.is_start = True
             SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
 
-    # TODO 增加判斷 clicked 是按到 menu button，讓 is_start=False, xxx=True
+        # handle menu btn event
+        menu_btn = Button(SCREEN, 10,10, menu_btn_img, 150, 49)
+        if menu_btn.draw() and is_pause is False:
+            is_start = False
+            is_pause = True
+            SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
+
 
     # TODO Extract Function
     if is_start:
@@ -117,8 +127,8 @@ while run:
         DAMAGE_TEXT_GROUP.draw(SCREEN)
 
         # control player action
-        # resert action variables
-        attack = False
+        # reset action variables
+        is_attack = False
         potion = False
         target = None
         # make sure mouse is visible
@@ -131,7 +141,8 @@ while run:
                 # show sword in place of mouse cursor
                 draw_img(sword_img, *pos, SCREEN)
                 if clicked and bandit.alive:
-                    attack = True
+                    is_attack = True
+
                     target = bandit_list[count]
         if potion_button.draw():
             potion = True
@@ -147,7 +158,7 @@ while run:
                     if action_cooldown >= action_wait_time:
                         # look for player action
                         # attack
-                        if attack and target is not None:
+                        if is_attack and target is not None:
                             knight.attack(target)
                             current_fighter += 1
                             action_cooldown = 0
@@ -221,6 +232,9 @@ while run:
                 game_over = 0
 
     # TODO if xxx=True then 顯示個人資料+裝備的畫面
+    if is_pause:
+        pass
+        # draw_img()
 
     pygame.display.update()
 
