@@ -36,6 +36,7 @@ game_over = 0
 main_page_img = pygame.image.load('../asset/img/Background/main_page_img.png').convert_alpha()
 # backgroud images
 background_img = pygame.image.load('../asset/img/Background/background.png').convert_alpha()
+menu_img = pygame.image.load('../asset/img/Background/menu_background.png').convert_alpha()
 # button image
 potion_img = pygame.image.load('../asset/img/Icons/potion.png').convert_alpha()
 restart_img = pygame.image.load('../asset/img/Icons/restart.png').convert_alpha()
@@ -51,7 +52,7 @@ sword_img = pygame.image.load('../asset/img/Icons/sword.png').convert_alpha()
 
 # fighter class
 knight = Fighter(200, 260, 'Knight', 50, 1, 3)
-bandit1 = Fighter(550, 260, 'Bandit', 10, 50, 1)
+bandit1 = Fighter(550, 260, 'Bandit', 10, 10, 1)
 bandit2 = Fighter(700, 260, 'Bandit', 10, 10, 1)
 
 bandit_list = []
@@ -86,7 +87,6 @@ while run:
             clicked = True
         else:
             clicked = False
-        # is_start = True
 
     # handle start btn event
     if clicked:
@@ -233,8 +233,12 @@ while run:
 
     # TODO if xxx=True then 顯示個人資料+裝備的畫面
     if is_pause:
-        pass
-        # draw_img()
+        draw_img(img=menu_img, x=0, y=0, display=SCREEN)
+        menu_knight = Fighter(x=SCREEN_WIDTH-100, y=SCREEN_HEIGHT-100, img_folder_name="menu_knight"
+                              , max_hp= 100, strength=1, potions=0)
+        menu_knight.draw(display=SCREEN)
+        menu_knight.update()
+
 
     pygame.display.update()
 

@@ -25,7 +25,7 @@ def draw_panel(fighter, bandits: list, display):
     # draw panel rectangle
     draw_img(img=panel_img, x=0, y=SCREEN_HEIGHT - BOTTOM_PANEL, display=display)
     # show knight stats
-    draw_text(f'{fighter.name} HP: {fighter.hp}', FONT, RED, 100, SCREEN_HEIGHT - BOTTOM_PANEL + 10, display)
+    draw_text(f'{fighter.img_folder_name} HP: {fighter.hp}', FONT, RED, 100, SCREEN_HEIGHT - BOTTOM_PANEL + 10, display)
     for count, i in enumerate(bandits):
         # show name and health
-        draw_text(f'{i.name} HP: {i.hp}', FONT, RED, 550, (SCREEN_HEIGHT - BOTTOM_PANEL + 10) + count * 60, display)
+        draw_text(f'{i.img_folder_name} HP: {i.hp}', FONT, RED, 550, (SCREEN_HEIGHT - BOTTOM_PANEL + 10) + count * 60, display)

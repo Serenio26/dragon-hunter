@@ -7,8 +7,8 @@ from src.env import RED, DAMAGE_TEXT_GROUP
 
 
 class Fighter():
-    def __init__(self, x, y, name, max_hp, strength, potions):
-        self.name = name
+    def __init__(self, x: int, y: int, img_folder_name: str, max_hp: int, strength: int, potions: int):
+        self.img_folder_name = img_folder_name
         self.max_hp = max_hp
         self.hp = max_hp
         self.strength = strength
@@ -19,31 +19,31 @@ class Fighter():
         self.frame_index = 0
         self.action = 0  # 0:idle, 1:attack, 2:hurt, 3:dead
         self.update_time = pygame.time.get_ticks()
-        # load idelimages
+        # load idle images
         temp_list = []
         for i in range(8):
-            img = pygame.image.load(f'../asset/img/{self.name}/Idle/{i}.png')
+            img = pygame.image.load(f'../asset/img/{self.img_folder_name}/Idle/{i}.png')
             img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
             temp_list.append(img)
         self.animation_list.append(temp_list)
         # load attack images
         temp_list = []
         for i in range(8):
-            img = pygame.image.load(f'../asset/img/{self.name}/Attack/{i}.png')
+            img = pygame.image.load(f'../asset/img/{self.img_folder_name}/Attack/{i}.png')
             img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
             temp_list.append(img)
         self.animation_list.append(temp_list)
         # load hurt images
         temp_list = []
         for i in range(3):
-            img = pygame.image.load(f'../asset/img/{self.name}/Hurt/{i}.png')
+            img = pygame.image.load(f'../asset/img/{self.img_folder_name}/Hurt/{i}.png')
             img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
             temp_list.append(img)
         self.animation_list.append(temp_list)
         # load death images
         temp_list = []
         for i in range(10):
-            img = pygame.image.load(f'../asset/img/{self.name}/Death/{i}.png')
+            img = pygame.image.load(f'../asset/img/{self.img_folder_name}/Death/{i}.png')
             img = pygame.transform.scale(img, (img.get_width() * 3, img.get_height() * 3))
             temp_list.append(img)
         self.animation_list.append(temp_list)
@@ -53,9 +53,9 @@ class Fighter():
 
     # update image
     def update(self):
-        animation_cooldown = 100
         # handle information
         self.image = self.animation_list[self.action][self.frame_index]
+        animation_cooldown = 100
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
@@ -75,7 +75,7 @@ class Fighter():
     def attack(self, target):
         # Deal damage to enemy
         rand = random.randint(-5, 5)
-        damage = self.strength + rand
+        damage = abs(self.strength + rand)
         target.hp -= damage
         # run enemy hurt animetion
         target.hurt()
