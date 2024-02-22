@@ -8,13 +8,13 @@ class DamageText(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = FONT.render(damage, True, colour)
         self.rect = self.image.get_rect()
-        self.rect.center = (x,y)
+        self.rect.center = (x, y)
         self.counter = 0
 
     def update(self):
-        #morve damage text up
+        # morve damage text up
         self.rect.y -= 1
-        #delete text
+        # delete text
         self.counter += 1
         if self.counter > 38:
             self.kill()
