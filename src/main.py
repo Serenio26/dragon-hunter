@@ -34,7 +34,8 @@ action_cooldown = 0
 action_wait_time = 90
 is_attack = False
 potion = False
-potion_effect = 10
+player_potion_effect = 50
+bandit_potion_effect = 10
 clicked = False
 game_over = 0
 game_level = 1
@@ -67,10 +68,10 @@ defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
 sword_img = pygame.image.load('../asset/img/Icons/sword.png').convert_alpha()
 
 # fighter class
-knight = Fighter(200, 260, KNIGHT, 50, 50, 3)
+knight = Fighter(200, 260, KNIGHT, 30, 25, 3)
 
-bandit1 = Fighter(550, 260, BANDIT, 10, 10, 1)
-bandit2 = Fighter(700, 260, BANDIT, 10, 10, 1)
+bandit1 = Fighter(550, 260, BANDIT, 20, 8, 1)
+bandit2 = Fighter(700, 260, BANDIT, 20, 8, 1)
 
 bandit_list = []
 bandit_list.append(bandit1)
@@ -216,8 +217,8 @@ while run:
                         if potion:
                             if knight.potions > 0:
                                 # check if potion will heal player beond mx health
-                                if knight.max_hp - knight.hp > potion_effect:
-                                    heal_amount = potion_effect
+                                if knight.max_hp - knight.hp > player_potion_effect:
+                                    heal_amount = player_potion_effect
                                 else:
                                     heal_amount = knight.max_hp - knight.hp
                                 knight.hp += heal_amount
@@ -237,8 +238,8 @@ while run:
                         if action_cooldown >= action_wait_time:
                             # check if bandit need to heal first
                             if (bandit.hp / bandit.max_hp) < 0.5 and bandit.potions > 0:
-                                if bandit.max_hp - bandit.hp > potion_effect:
-                                    heal_amount = potion_effect
+                                if bandit.max_hp - bandit.hp > bandit_potion_effect:
+                                    heal_amount = bandit_potion_effect
                                 else:
                                     heal_amount = bandit.max_hp - bandit.hp
                                 bandit.hp += heal_amount

@@ -106,13 +106,14 @@ class Fighter():
     def reset(self, is_win=False):
         if is_win:
             if self.img_folder_name == KNIGHT:
-                self.max_hp += random.randint(1, 11)
+                self.max_hp += random.randint(5, 16)
                 self.strength += random.randint(1, 11)
                 self.potions += random.randint(1, 3)
+
             elif self.img_folder_name == BANDIT:
                 self.max_hp += 10
-                self.strength += 10
-                self.potions += 2
+                self.strength += 5
+                self.potions += 1
 
         self.alive = True
         self.potions = self.start_potions
