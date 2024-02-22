@@ -3,7 +3,7 @@ import random
 import pygame
 
 from src.DamageText import DamageText
-from src.env import RED, DAMAGE_TEXT_GROUP
+from src.env import RED, DAMAGE_TEXT_GROUP, KNIGHT, BANDIT
 
 
 class Fighter():
@@ -103,7 +103,17 @@ class Fighter():
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
 
-    def reset(self):
+    def reset(self, is_win=False):
+        if is_win:
+            if self.img_folder_name == KNIGHT:
+                self.max_hp += random.randint(1, 11)
+                self.strength += random.randint(1, 11)
+                self.potions += random.randint(1, 3)
+            elif self.img_folder_name == BANDIT:
+                self.max_hp += 10
+                self.strength += 10
+                self.potions += 2
+
         self.alive = True
         self.potions = self.start_potions
         self.hp = self.max_hp

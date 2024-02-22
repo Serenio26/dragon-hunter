@@ -5,7 +5,7 @@ from src.DamageText import DamageText
 from src.Fighter import Fighter
 from src.HealthBar import HealthBar
 from src.env import RED, GREEN, SCREEN_HEIGHT, BOTTOM_PANEL, DAMAGE_TEXT_GROUP, FONT, SCREEN_WIDTH, \
-    HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT
+    HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT, KNIGHT, BANDIT
 from src.module import draw_text, draw_img, draw_panel, get_screen_mode
 
 # control variable
@@ -30,17 +30,21 @@ potion = False
 potion_effect = 10
 clicked = False
 game_over = 0
+game_level = 1
 
 # load image
 # main pages images
 main_page_img = pygame.image.load('../asset/img/Background/main_page_img.png').convert_alpha()
 #  background images
-background_img = pygame.image.load('../asset/img/Background/background.png').convert_alpha()
+lv1_background_img = pygame.image.load('../asset/img/Background/background.png').convert_alpha()
+lv2_background_img = pygame.image.load('../asset/img/Background/com_fire_cave.png').convert_alpha()
+lv3_background_img = pygame.image.load('../asset/img/Background/com_deep_ocean.png').convert_alpha()
 menu_img = pygame.image.load('../asset/img/Background/menu_background.png').convert_alpha()
 # button image
 potion_img = pygame.image.load('../asset/img/Icons/potion.png').convert_alpha()
 restart_img = pygame.image.load('../asset/img/Icons/restart.png').convert_alpha()
 start_button_img = pygame.image.load('../asset/img/Icons/start_button.png').convert_alpha()
+next_img = pygame.image.load('../asset/img/Icons/next.png').convert_alpha()
 workshop_img = pygame.image.load('../asset/img/Icons/workshop.png').convert_alpha()
 # TODO 修改裝備按鈕
 menu_btn_img = pygame.image.load('../asset/img/Icons/menu_btn.png').convert_alpha()
@@ -51,9 +55,10 @@ defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
 sword_img = pygame.image.load('../asset/img/Icons/sword.png').convert_alpha()
 
 # fighter class
-knight = Fighter(200, 260, 'Knight', 50, 1, 3)
-bandit1 = Fighter(550, 260, 'Bandit', 10, 10, 1)
-bandit2 = Fighter(700, 260, 'Bandit', 10, 10, 1)
+knight = Fighter(200, 260, KNIGHT, 50, 50, 3)
+
+bandit1 = Fighter(550, 260, BANDIT, 10, 10, 1)
+bandit2 = Fighter(700, 260, BANDIT, 10, 10, 1)
 
 bandit_list = []
 bandit_list.append(bandit1)
@@ -68,6 +73,7 @@ bandit2_health_bar = HealthBar(550, SCREEN_HEIGHT - BOTTOM_PANEL + 100, bandit2.
 # create button
 potion_button = Button(SCREEN, 100, SCREEN_HEIGHT - BOTTOM_PANEL + 70, potion_img, 64, 64)
 restart_button = Button(SCREEN, 330, 120, restart_img, 120, 30)
+next_btn = Button(SCREEN, 330, 120, next_img, 120, 30)
 
 # main game running system
 run = True
@@ -112,13 +118,21 @@ while run:
     # TODO Extract Function
     if is_start:
         # draw background
-        draw_img(img=background_img, x=0, y=0, display=SCREEN)
+        if game_level < 3:
+            draw_img(img=lv1_background_img, x=0, y=0, display=SCREEN)
+        elif game_level < 5:
+            draw_img(img=lv2_background_img, x=0, y=0, display=SCREEN)
+        else:
+            draw_img(img=lv3_background_img, x=0, y=0, display=SCREEN)
+
+        # draw level
+        draw_text(f"Level: {game_level}", FONT, RED, 10, 10, SCREEN)
 
         # draw panel
         draw_panel(fighter=knight, bandits=bandit_list, display=SCREEN)
-        knight_health_bar.draw(knight.hp, SCREEN)
-        bandit1_health_bar.draw(bandit1.hp, SCREEN)
-        bandit2_health_bar.draw(bandit2.hp, SCREEN)
+        knight_health_bar.draw(hp=knight.hp, max_hp=knight.max_hp, display=SCREEN)
+        bandit1_health_bar.draw(hp=bandit1.hp, max_hp=bandit1.max_hp, display=SCREEN)
+        bandit2_health_bar.draw(hp=bandit2.hp, max_hp=bandit2.max_hp, display=SCREEN)
 
         # draw fighter
         knight.update()
@@ -223,18 +237,29 @@ while run:
             game_over = 1
 
         # check if game is over
-        if game_over != 0:
+        if game_over:
+            is_reset = False
             if game_over == 1:
                 draw_img(img=victory_img, x=250, y=50, display=SCREEN)
+                next_btn.is_win = True
             if game_over == -1:
                 draw_img(img=defeat_img, x=250, y=50, display=SCREEN)
-            if restart_button.draw():
-                knight.reset()
+                if restart_button.draw():
+                    is_reset = True
+
+            if next_btn.is_win and next_btn.draw():
+                is_reset = True
+                game_level += 1
+
+            if is_reset:
+                knight.reset(is_win=next_btn.is_win)
                 for bandit in bandit_list:
-                    bandit.reset()
+                    bandit.reset(is_win=next_btn.is_win)
                 current_fighter = 1
                 action_cooldown = 0
                 game_over = 0
+                is_reset = False
+                next_btn.is_wi = False
 
     # TODO if xxx=True then 顯示個人資料+裝備的畫面
     if is_pause:

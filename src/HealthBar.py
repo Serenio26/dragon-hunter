@@ -10,9 +10,10 @@ class HealthBar():
         self.hp = hp
         self.max_hp = max_hp
 
-    def draw(self, hp, display):
+    def draw(self, hp: int, max_hp: int, display):
         # update with new health
         self.hp = hp
+        self.max_hp = max_hp
         # cal health ratio
         ratio = self.hp / self.max_hp
         pygame.draw.rect(display, RED, (self.x, self.y, 150, 20))

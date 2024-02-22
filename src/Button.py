@@ -9,6 +9,7 @@ class Button():
         self.clicked = False
         self.surface = surface
         self.is_start = False
+        self.is_win = False
 
     def draw(self):
         action = False

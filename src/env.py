@@ -16,3 +16,7 @@ DAMAGE_TEXT_GROUP = pygame.sprite.Group()
 
 # define fonts
 FONT = pygame.font.SysFont('Times New Roman', 26)
+
+# define obj id
+BANDIT = 'Bandit'
+KNIGHT = 'Knight'
