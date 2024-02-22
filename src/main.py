@@ -34,7 +34,7 @@ game_over = 0
 # load image
 # main pages images
 main_page_img = pygame.image.load('../asset/img/Background/main_page_img.png').convert_alpha()
-# backgroud images
+#  background images
 background_img = pygame.image.load('../asset/img/Background/background.png').convert_alpha()
 menu_img = pygame.image.load('../asset/img/Background/menu_background.png').convert_alpha()
 # button image
@@ -43,7 +43,7 @@ restart_img = pygame.image.load('../asset/img/Icons/restart.png').convert_alpha(
 start_button_img = pygame.image.load('../asset/img/Icons/start_button.png').convert_alpha()
 workshop_img = pygame.image.load('../asset/img/Icons/workshop.png').convert_alpha()
 # TODO 修改裝備按鈕
-menu_btn_img = pygame.image.load('../asset/img/Icons/start_button.png').convert_alpha()
+menu_btn_img = pygame.image.load('../asset/img/Icons/menu_btn.png').convert_alpha()
 # load victory and defeat image
 victory_img = pygame.image.load('../asset/img/Icons/victory.png').convert_alpha()
 defeat_img = pygame.image.load('../asset/img/Icons/defeat.png').convert_alpha()
@@ -71,6 +71,12 @@ restart_button = Button(SCREEN, 330, 120, restart_img, 120, 30)
 
 # main game running system
 run = True
+
+
+def handle_menu_btn_event():
+    pass
+
+
 while run:
     clock.tick(fps)
 
@@ -96,13 +102,12 @@ while run:
             start_button.is_start = True
             SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
 
-        # handle menu btn event
-        menu_btn = Button(SCREEN, 10,10, menu_btn_img, 150, 49)
-        if menu_btn.draw() and is_pause is False:
+        handle_menu_btn_event()
+        menu_btn = Button(SCREEN, 10, 10, menu_btn_img, 150, 49)
+        if menu_btn.draw() and not is_pause:
             is_start = False
             is_pause = True
             SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
-
 
     # TODO Extract Function
     if is_start:
