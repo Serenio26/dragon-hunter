@@ -1,16 +1,23 @@
+import random
+
 import pygame
+import pygame.mixer
 
 from src.Button import Button
 from src.DamageText import DamageText
 from src.Fighter import Fighter
 from src.HealthBar import HealthBar
 from src.env import RED, GREEN, SCREEN_HEIGHT, BOTTOM_PANEL, DAMAGE_TEXT_GROUP, FONT, SCREEN_WIDTH, \
-    HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT, KNIGHT, BANDIT
+    HOME_SCREEN_WIDTH, HOME_SCREEN_HEIGHT, KNIGHT, BANDIT, SOUND_PATH, FONT_SIZE
 from src.module import draw_text, draw_img, draw_panel, get_screen_mode
+
+# init pygame.mixer
+pygame.mixer.init()
 
 # control variable
 is_start = False
 is_pause = False
+is_sound = False
 
 # set Frame rate
 clock = pygame.time.Clock()
@@ -31,6 +38,12 @@ potion_effect = 10
 clicked = False
 game_over = 0
 game_level = 1
+
+
+# load music
+bgm1 = pygame.mixer.Sound(f'{SOUND_PATH}/bgm_1.mp3')
+bgm2 = pygame.mixer.Sound(f'{SOUND_PATH}/bgm_2.mp3')
+bgm3 = pygame.mixer.Sound(f'{SOUND_PATH}/bgm_3.mp3')
 
 # load image
 # main pages images
@@ -83,6 +96,31 @@ def handle_menu_btn_event():
     pass
 
 
+# play bgm
+def play_background_music(level):
+    if level in [1, 2]:
+        pygame.mixer.Channel(0).set_volume(0.1)
+        pygame.mixer.Channel(0).play(bgm1, loops=-1)  # -1 表示无限循环
+    elif level in [3, 4]:
+        pygame.mixer.Channel(0).set_volume(1)
+        pygame.mixer.Channel(0).play(bgm2, loops=-1)
+    else:
+        pygame.mixer.Channel(0).set_volume(0.2)
+        pygame.mixer.Channel(0).play(bgm3, loops=-1)
+
+
+def stop_background_music():
+    pygame.mixer.Channel(0).stop()
+
+
+# change bgm
+def update_background_music(new_level):
+    if is_sound:
+        return
+    stop_background_music()
+    play_background_music(new_level)
+
+
 while run:
     clock.tick(fps)
 
@@ -117,6 +155,8 @@ while run:
 
     # TODO Extract Function
     if is_start:
+        update_background_music(game_level)
+        is_sound = True
         # draw background
         if game_level < 3:
             draw_img(img=lv1_background_img, x=0, y=0, display=SCREEN)
@@ -248,8 +288,25 @@ while run:
                     is_reset = True
 
             if next_btn.is_win and next_btn.draw():
+                stop_background_music()
+                is_sound = False
                 is_reset = True
                 game_level += 1
+                # TODO Player chose abilities value
+                # draw_text("Chose 1 or 2 or 3:", FONT, RED, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN)
+                # ask_topic = "max_hp"
+                # num_end = 11
+                # for i in range(3):
+                #     draw_text(f"{ask_topic}:", FONT, RED, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + FONT_SIZE, SCREEN)
+                #     for j in range(3):
+                #         temp = random.randint(1, num_end)
+                #         draw_text(f"{temp}", FONT, RED, SCREEN_WIDTH // 2
+                #                   , SCREEN_HEIGHT // 2 + (FONT_SIZE * j + 1) + 1, SCREEN)
+                #     if i == 1:
+                #         ask_topic = "strength"
+                #     if i == 2:
+                #         ask_topic = "potions"
+                #         num_end = 3
 
             if is_reset:
                 knight.reset(is_win=next_btn.is_win)
@@ -268,7 +325,6 @@ while run:
                               , max_hp= 100, strength=1, potions=0)
         menu_knight.draw(display=SCREEN)
         menu_knight.update()
-
 
     pygame.display.update()
 
