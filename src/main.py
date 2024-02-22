@@ -39,7 +39,6 @@ clicked = False
 game_over = 0
 game_level = 1
 
-
 # load music
 bgm1 = pygame.mixer.Sound(f'{SOUND_PATH}/bgm_1.mp3')
 bgm2 = pygame.mixer.Sound(f'{SOUND_PATH}/bgm_2.mp3')
@@ -127,7 +126,6 @@ while run:
     # draw main page
     draw_img(img=main_page_img, x=0, y=0, display=SCREEN)
     draw_img(img=start_button_img, x=HOME_SCREEN_WIDTH / 2 - 15, y=HOME_SCREEN_HEIGHT - 150, display=SCREEN)
-    draw_img(img=menu_btn_img, x=10, y=10, display=SCREEN)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -144,13 +142,6 @@ while run:
         if start_button.draw() and start_button.is_start is False:
             is_start = True
             start_button.is_start = True
-            SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
-
-        handle_menu_btn_event()
-        menu_btn = Button(SCREEN, 10, 10, menu_btn_img, 150, 49)
-        if menu_btn.draw() and not is_pause:
-            is_start = False
-            is_pause = True
             SCREEN = get_screen_mode(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
 
     # TODO Extract Function
@@ -293,20 +284,6 @@ while run:
                 is_reset = True
                 game_level += 1
                 # TODO Player chose abilities value
-                # draw_text("Chose 1 or 2 or 3:", FONT, RED, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN)
-                # ask_topic = "max_hp"
-                # num_end = 11
-                # for i in range(3):
-                #     draw_text(f"{ask_topic}:", FONT, RED, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + FONT_SIZE, SCREEN)
-                #     for j in range(3):
-                #         temp = random.randint(1, num_end)
-                #         draw_text(f"{temp}", FONT, RED, SCREEN_WIDTH // 2
-                #                   , SCREEN_HEIGHT // 2 + (FONT_SIZE * j + 1) + 1, SCREEN)
-                #     if i == 1:
-                #         ask_topic = "strength"
-                #     if i == 2:
-                #         ask_topic = "potions"
-                #         num_end = 3
 
             if is_reset:
                 knight.reset(is_win=next_btn.is_win)
@@ -319,12 +296,6 @@ while run:
                 next_btn.is_wi = False
 
     # TODO if xxx=True then 顯示個人資料+裝備的畫面
-    if is_pause:
-        draw_img(img=menu_img, x=0, y=0, display=SCREEN)
-        menu_knight = Fighter(x=SCREEN_WIDTH-100, y=SCREEN_HEIGHT-100, img_folder_name="menu_knight"
-                              , max_hp= 100, strength=1, potions=0)
-        menu_knight.draw(display=SCREEN)
-        menu_knight.update()
 
     pygame.display.update()
 
